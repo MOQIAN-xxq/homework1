@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>微型桌面Delta分拣机器人 - AI视觉精准分拣</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+        
+        /* 呼吸灯动画 */
+        @keyframes pulse-glow {
+            0%, 100% {
+                box-shadow: 0 0 20px rgba(6, 182, 212, 0.4),
+                            0 0 40px rgba(6, 182, 212, 0.2),
+                            0 0 60px rgba(6, 182, 212, 0.1);
+            }
+            50% {
+                box-shadow: 0 0 30px rgba(6, 182, 212, 0.6),
+                            0 0 60px rgba(6, 182, 212, 0.4),
+                            0 0 90px rgba(6, 182, 212, 0.2);
+            }
+        }
+        
+        .btn-pulse {
+            animation: pulse-glow 2.5s ease-in-out infinite;
+        }
+        
+        .btn-pulse:hover {
+            animation: none;
+            box-shadow: 0 0 40px rgba(6, 182, 212, 0.7),
+                        0 0 80px rgba(6, 182, 212, 0.5);
+        }
+        
+        /* 渐变背景 */
+        .hero-gradient {
+            background: radial-gradient(ellipse at center top, rgba(6, 182, 212, 0.15) 0%, transparent 50%),
+                        linear-gradient(180deg, #0f172a 0%, #0c1222 100%);
+        }
+        
+        /* 卡片悬浮效果 */
+        .card-hover {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px -12px rgba(6, 182, 212, 0.25);
+        }
+        
+        /* 网格背景 */
+        .grid-bg {
+            background-image: 
+                linear-gradient(rgba(100, 116, 139, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(100, 116, 139, 0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+        
+        /* 滚动平滑 */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* 输入框聚焦效果 */
+        .input-focus:focus {
+            box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.3),
+                        0 0 20px rgba(6, 182, 212, 0.1);
+        }
+        
+        /* 渐变文字 */
+        .gradient-text {
+            background: linear-gradient(135deg, #22d3ee 0%, #3b82f6 50%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 grid-bg">
+
+    <!-- ==================== 1. 头部首屏 Hero Section ==================== -->
+    <section class="hero-gradient min-h-screen flex items-center relative overflow-hidden">
+        <!-- 背景装饰 -->
+        <div class="absolute inset-0 overflow-hidden pointer-events-none">
+            <div class="absolute top-20 left-10 w-72 h-72 bg-cyan-500/10 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-20 right-10 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl"></div>
+        </div>
+        
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="max-w-5xl mx-auto text-center">
+                
+                <!-- 顶部标签 -->
+                <div class="inline-flex items-center gap-2 px-4 py-2 bg-slate-800/60 backdrop-blur-sm rounded-full border border-slate-700/50 mb-8">
+                    <span class="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></span>
+                    <span class="text-sm text-slate-300 font-medium">🚀 首批内测招募中 · 仅限前50个实验室</span>
+                </div>
+                
+                <!-- 主标题 -->
+                <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold mb-6 leading-tight">
+                    <span class="text-white">告别手抖眼花！</span>
+                    <br class="hidden sm:block">
+                    <span class="gradient-text">用AI视觉机器人，精准分拣每一个微小零件</span>
+                </h1>
+                
+                <!-- 副标题 -->
+                <p class="text-lg sm:text-xl text-slate-400 max-w-3xl mx-auto mb-10 leading-relaxed">
+                    专为科研实验室与小批量精密制造打造的
+                    <span class="text-cyan-400 font-semibold">【桌面级Delta分拣工作站】</span>。
+                    搭载AI视觉大脑与柔顺控制算法，自动识别
+                    <span class="text-white font-medium">0.5-5mm</span>微小零件的位姿、正反面与缺陷，
+                    <span class="text-cyan-300">24小时无人值守精准作业</span>。
+                </p>
+                
+                <!-- CTA按钮 -->
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                    <a href="#cta" class="btn-pulse group inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold text-lg rounded-xl transition-all duration-300 transform hover:scale-105">
+                        <span>立即锁定首批内测名额</span>
+                        <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                        </svg>
+                    </a>
+                </div>
+                
+                <!-- 信任标签 -->
+                <div class="mt-12 flex flex-wrap items-center justify-center gap-4 sm:gap-8 text-slate-500 text-sm">
+                    <div class="flex items-center gap-2">
+                        <svg class="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                        </svg>
+                        <span>AI视觉识别准确率 99.5%</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <svg class="w-5 h-5 text-cyan-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path>
+                        </svg>
+                        <span>分拣节拍 120次/分钟</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <svg class="w-5 h-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0z"></path>
+                        </svg>
+                        <span>24小时无人值守运行</span>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        
+        <!-- 向下滚动指示 -->
+        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+            <svg class="w-6 h-6 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+            </svg>
+        </div>
+    </section>
+
+    <!-- ==================== 2. 痛点区 The Problem ==================== -->
+    <section id="problem" class="py-20 sm:py-28 bg-gradient-to-b from-slate-900 via-slate-800/50 to-slate-900">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <!-- 标题 -->
+            <div class="text-center mb-16">
+                <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">
+                    为什么你的微小零件分拣还在依赖
+                    <span class="text-red-400">"高成本人工"</span>？
+                </h2>
+                <div class="w-24 h-1 bg-gradient-to-r from-red-500 to-orange-500 mx-auto rounded-full"></div>
+            </div>
+            
+            <!-- 痛点卡片 -->
+            <div class="grid md:grid-cols-3 gap-6 lg:gap-8 max-w-6xl mx-auto">
+                
+                <!-- 痛点一 -->
+                <div class="card-hover bg-slate-800/40 backdrop-blur-sm rounded-2xl p-6 sm:p-8 border border-slate-700/50 hover:border-red-500/50">
+                    <div class="w-14 h-14 bg-red-500/10 rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                        <span class="text-red-400">痛点一</span>
+                        人工镊子 = 高损耗率
+                    </h3>
+                    <p class="text-slate-400 leading-relaxed">
+                        手抖一下，昂贵的微型弹簧或芯片弹飞再也找不到；
+                        <span class="text-slate-300">一下午的重复劳动</span>，
+                        研究生的<span class="text-red-300">视力与腰颈严重透支</span>。
+                    </p>
+                </div>
+                
+                <!-- 痛点二 -->
+                <div class="card-hover bg-slate-800/40 backdrop-blur-sm rounded-2xl p-6 sm:p-8 border border-slate-700/50 hover:border-orange-500/50">
+                    <div class="w-14 h-14 bg-orange-500/10 rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                        <span class="text-orange-400">痛点二</span>
+                        工业设备"高不可攀"
+                    </h3>
+                    <p class="text-slate-400 leading-relaxed">
+                        <span class="text-orange-300">动辄十几万</span>的柔性上料系统，
+                        体积庞大且无法灵活切换任务；
+                        低端贴片机只能处理规整零件，
+                        遇到<span class="text-slate-300">异形件、透明件直接抓瞎</span>。
+                    </p>
+                </div>
+                
+                <!-- 痛点三 -->
+                <div class="card-hover bg-slate-800/40 backdrop-blur-sm rounded-2xl p-6 sm:p-8 border border-slate-700/50 hover:border-yellow-500/50">
+                    <div class="w-14 h-14 bg-yellow-500/10 rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                        <span class="text-yellow-400">痛点三</span>
+                        研发试产的速度被手工拖垮
+                    </h3>
+                    <p class="text-slate-400 leading-relaxed">
+                        新材料选型、小批量试产，
+                        <span class="text-slate-300">几百个零件需要分拣分类</span>，
+                        纯人工<span class="text-yellow-300">一周都干不完</span>，
+                        严重耽误实验或交付节点。
+                    </p>
+                </div>
+                
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== 3. 解决方案区 The Solution ==================== -->
+    <section id="solution" class="py-20 sm:py-28 bg-slate-900">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <!-- 标题 -->
+            <div class="text-center mb-16">
+                <div class="inline-flex items-center gap-2 px-4 py-2 bg-cyan-500/10 rounded-full border border-cyan-500/30 mb-6">
+                    <span class="text-cyan-400 text-sm font-medium">💡 解决方案</span>
+                </div>
+                <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">
+                    桌面级 AI 分拣 Delta 机器人
+                    <br>
+                    <span class="gradient-text">你的不眠不休"超级实验助手"</span>
+                </h2>
+                <div class="w-24 h-1 bg-gradient-to-r from-cyan-500 to-blue-500 mx-auto rounded-full"></div>
+            </div>
+            
+            <!-- 功能卡片 -->
+            <div class="grid md:grid-cols-3 gap-6 lg:gap-8 max-w-6xl mx-auto">
+                
+                <!-- 功能一 -->
+                <div class="card-hover group bg-gradient-to-br from-slate-800 to-slate-800/50 rounded-2xl p-6 sm:p-8 border border-slate-700/50 hover:border-cyan-500/50 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-cyan-500/5 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:bg-cyan-500/10 transition-colors"></div>
+                    
+                    <div class="relative">
+                        <div class="w-16 h-16 bg-gradient-to-br from-cyan-500/20 to-blue-500/20 rounded-2xl flex items-center justify-center mb-6 border border-cyan-500/30">
+                            <svg class="w-8 h-8 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                            </svg>
+                        </div>
+                        
+                        <h3 class="text-xl font-bold text-white mb-2">
+                            <span class="text-cyan-400">【</span>
+                            AI 显微视觉系统
+                            <span class="text-cyan-400">】</span>
+                        </h3>
+                        
+                        <div class="flex items-center gap-2 mb-4">
+                            <span class="px-3 py-1 bg-green-500/10 text-green-400 text-xs font-bold rounded-full">
+                                准确率 99.5%
+                            </span>
+                            <span class="px-3 py-1 bg-cyan-500/10 text-cyan-400 text-xs font-bold rounded-full">
+                                最小识别 0.5mm
+                            </span>
+                        </div>
+                        
+                        <p class="text-slate-400 leading-relaxed">
+                            不依赖打光玄学，<span class="text-slate-300">封闭暗箱配合自研光路</span>，
+                            自动识别<span class="text-cyan-300">0.5mm零件</span>的正反面、
+                            缺口与异色缺陷，分拣准确率高达
+                            <span class="text-white font-semibold">99.5%</span>。
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- 功能二 -->
+                <div class="card-hover group bg-gradient-to-br from-slate-800 to-slate-800/50 rounded-2xl p-6 sm:p-8 border border-slate-700/50 hover:border-blue-500/50 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:bg-blue-500/10 transition-colors"></div>
+                    
+                    <div class="relative">
+                        <div class="w-16 h-16 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-2xl flex items-center justify-center mb-6 border border-blue-500/30">
+                            <svg class="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0m-3 6a1.5 1.5 0 00-3 0v2a7.5 7.5 0 0015 0v-5a1.5 1.5 0 00-3 0m-6-3V11m0-5.5v-1a1.5 1.5 0 013 0v1m0 0V11m0-5.5a1.5 1.5 0 013 0v3m0 0V11"></path>
+                            </svg>
+                        </div>
+                        
+                        <h3 class="text-xl font-bold text-white mb-2">
+                            <span class="text-blue-400">【</span>
+                            柔顺抓取执行器
+                            <span class="text-blue-400">】</span>
+                        </h3>
+                        
+                        <div class="flex items-center gap-2 mb-4">
+                            <span class="px-3 py-1 bg-blue-500/10 text-blue-400 text-xs font-bold rounded-full">
+                                力控算法
+                            </span>
+                            <span class="px-3 py-1 bg-purple-500/10 text-purple-400 text-xs font-bold rounded-full">
+                                自适应吸附
+                            </span>
+                        </div>
+                        
+                        <p class="text-slate-400 leading-relaxed">
+                            融合<span class="text-slate-300">力控算法与仿生吸嘴</span>，
+                            能感知<span class="text-blue-300">"触底瞬间"</span>并自适应切换真空/静电吸附，
+                            即使是<span class="text-slate-300">光滑的钟表齿轮</span>和
+                            <span class="text-slate-300">脆弱的微球</span>也能
+                            <span class="text-white font-semibold">无损拾取</span>。
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- 功能三 -->
+                <div class="card-hover group bg-gradient-to-br from-slate-800 to-slate-800/50 rounded-2xl p-6 sm:p-8 border border-slate-700/50 hover:border-teal-500/50 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-teal-500/5 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:bg-teal-500/10 transition-colors"></div>
+                    
+                    <div class="relative">
+                        <div class="w-16 h-16 bg-gradient-to-br from-teal-500/20 to-green-500/20 rounded-2xl flex items-center justify-center mb-6 border border-teal-500/30">
+                            <svg class="w-8 h-8 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                            </svg>
+                        </div>
+                        
+                        <h3 class="text-xl font-bold text-white mb-2">
+                            <span class="text-teal-400">【</span>
+                            一键切换，万能料盘
+                            <span class="text-teal-400">】</span>
+                        </h3>
+                        
+                        <div class="flex items-center gap-2 mb-4">
+                            <span class="px-3 py-1 bg-teal-500/10 text-teal-400 text-xs font-bold rounded-full">
+                                5分钟切换
+                            </span>
+                            <span class="px-3 py-1 bg-green-500/10 text-green-400 text-xs font-bold rounded-full">
+                                全实验室覆盖
+                            </span>
+                        </div>
+                        
+                        <p class="text-slate-400 leading-relaxed">
+                            <span class="text-white font-semibold">5分钟</span>完成从
+                            <span class="text-teal-300">"分拣种子"</span>到
+                            <span class="text-teal-300">"分拣芯片"</span>的任务切换，
+                            提供<span class="text-slate-300">标准料盘与快拆吸嘴</span>，
+                            让一台机器<span class="text-white font-semibold">覆盖全实验室的分拣需求</span>。
+                        </p>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== 4. 产品预览 Product Showcasing ==================== -->
+    <section id="preview" class="py-20 sm:py-28 bg-gradient-to-b from-slate-900 via-slate-800/30 to-slate-900">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <!-- 标题 -->
+            <div class="text-center mb-16">
+                <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">
+                    机器人工作流预览
+                    <br>
+                    <span class="text-slate-400 text-xl sm:text-2xl">看它如何拆解一个真实的分拣任务</span>
+                </h2>
+                <div class="w-24 h-1 bg-gradient-to-r from-cyan-500 to-blue-500 mx-auto rounded-full"></div>
+            </div>
+            
+            <!-- 工作流卡片 -->
+            <div class="max-w-5xl mx-auto">
+                <div class="relative">
+                    
+                    <!-- 连接线 (桌面端) -->
+                    <div class="hidden lg:block absolute top-1/2 left-0 right-0 h-0.5 bg-gradient-to-r from-cyan-500/50 via-blue-500/50 to-purple-500/50 transform -translate-y-1/2 z-0"></div>
+                    
+                    <div class="grid lg:grid-cols-3 gap-6 lg:gap-8 relative z-10">
+                        
+                        <!-- Step 01 -->
+                        <div class="card-hover bg-slate-800/60 backdrop-blur-sm rounded-2xl border border-slate-700/50 hover:border-cyan-500/50 overflow-hidden">
+                            <div class="bg-gradient-to-r from-cyan-500/20 to-transparent px-6 py-4 border-b border-slate-700/50">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-cyan-400 font-mono text-sm font-bold">Step 01</span>
+                                    <span class="px-3 py-1 bg-cyan-500/20 text-cyan-300 text-xs font-bold rounded-full">
+                                        视觉扫描
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="p-6">
+                                <div class="w-full h-32 bg-slate-900/80 rounded-xl mb-4 overflow-hidden flex items-center justify-center border border-slate-700/30">
+                                    <div class="text-center">
+                                        <div class="inline-flex items-center gap-2 mb-2">
+                                            <div class="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+                                            <span class="text-green-400 text-xs font-mono">SCANNING...</span>
+                                        </div>
+                                        <div class="font-mono text-xs text-cyan-400 space-y-1">
+                                            <div>✓ (x: 12.5mm, y: 34.2mm, θ: 45°)</div>
+                                            <div>✓ <span class="text-red-400">缺陷品</span> detected</div>
+                                            <div>✓ 类别: 微型弹簧</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="text-slate-400 text-sm leading-relaxed">
+                                    <span class="text-slate-300 font-medium">高亮待分拣的微小零件</span>，
+                                    自动标记<span class="text-cyan-300">坐标、角度与类别</span>
+                                    "<span class="text-red-400">缺陷品（卷边、划痕）</span>"。
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <!-- Step 02 -->
+                        <div class="card-hover bg-slate-800/60 backdrop-blur-sm rounded-2xl border border-slate-700/50 hover:border-blue-500/50 overflow-hidden">
+                            <div class="bg-gradient-to-r from-blue-500/20 to-transparent px-6 py-4 border-b border-slate-700/50">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-blue-400 font-mono text-sm font-bold">Step 02</span>
+                                    <span class="px-3 py-1 bg-blue-500/20 text-blue-300 text-xs font-bold rounded-full">
+                                        高速抓取
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="p-6">
+                                <div class="w-full h-32 bg-slate-900/80 rounded-xl mb-4 overflow-hidden flex items-center justify-center border border-slate-700/30">
+                                    <div class="text-center">
+                                        <div class="inline-flex items-center gap-2 mb-3">
+                                            <svg class="w-6 h-6 text-blue-400 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
+                                            </svg>
+                                        </div>
+                                        <div class="font-mono text-xs text-blue-400 space-y-1">
+                                            <div>Delta节拍: <span class="text-white">120次/分钟</span></div>
+                                            <div>策略1: <span class="text-cyan-300">真空吸嘴</span> → 光滑齿轮</div>
+                                            <div>策略2: <span class="text-purple-300">仿生夹爪</span> → 不规则粉末块</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="text-slate-400 text-sm leading-relaxed">
+                                    <span class="text-slate-300 font-medium">Delta机械臂以120次/分钟的节拍</span>，
+                                    <span class="text-blue-300">自适应抓取策略</span>——
+                                    真空吸嘴拾取光滑齿轮，仿生夹爪拿取不规则粉末块。
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <!-- Step 03 -->
+                        <div class="card-hover bg-slate-800/60 backdrop-blur-sm rounded-2xl border border-slate-700/50 hover:border-purple-500/50 overflow-hidden">
+                            <div class="bg-gradient-to-r from-purple-500/20 to-transparent px-6 py-4 border-b border-slate-700/50">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-purple-400 font-mono text-sm font-bold">Step 03</span>
+                                    <span class="px-3 py-1 bg-purple-500/20 text-purple-300 text-xs font-bold rounded-full">
+                                        智能分类
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="p-6">
+                                <div class="w-full h-32 bg-slate-900/80 rounded-xl mb-4 overflow-hidden flex items-center justify-center border border-slate-700/30">
+                                    <div class="text-center">
+                                        <div class="grid grid-cols-4 gap-1 mb-2">
+                                            <div class="w-6 h-6 rounded bg-green-500/30 border border-green-500/50"></div>
+                                            <div class="w-6 h-6 rounded bg-cyan-500/30 border border-cyan-500/50"></div>
+                                            <div class="w-6 h-6 rounded bg-blue-500/30 border border-blue-500/50"></div>
+                                            <div class="w-6 h-6 rounded bg-slate-700/30 border border-slate-600/50"></div>
+                                        </div>
+                                        <div class="font-mono text-xs text-purple-400 space-y-1">
+                                            <div>定位: 96孔板 A1→H12</div>
+                                            <div>精度: <span class="text-white">±0.1mm</span></div>
+                                            <div>通知: 微信/邮件推送 ✓</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="text-slate-400 text-sm leading-relaxed">
+                                    <span class="text-slate-300 font-medium">精准放置到96孔料盘对应孔位</span>，
+                                    <span class="text-purple-300">自动生成实验报表</span>并
+                                    <span class="text-white">微信/邮件推送分拣完成通知</span>。
+                                </p>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== 5. 底部留存表单 Final CTA & Lead Capture ==================== -->
+    <section id="cta" class="py-20 sm:py-28 bg-gradient-to-b from-slate-900 to-slate-950">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="max-w-3xl mx-auto">
+                
+                <!-- CTA卡片 -->
+                <div class="relative bg-gradient-to-br from-slate-800/80 to-slate-800/40 backdrop-blur-sm rounded-3xl p-8 sm:p-12 border border-slate-700/50 overflow-hidden">
+                    
+                    <!-- 背景装饰 -->
+                    <div class="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden">
+                        <div class="absolute -top-32 -right-32 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl"></div>
+                        <div class="absolute -bottom-32 -left-32 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl"></div>
+                    </div>
+                    
+                    <div class="relative z-10">
+                        
+                        <!-- 标题 -->
+                        <div class="text-center mb-10">
+                            <div class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-500/20 to-orange-500/20 rounded-full border border-amber-500/30 mb-6">
+                                <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd"></path>
+                                </svg>
+                                <span class="text-amber-400 text-sm font-bold">限时优惠</span>
+                            </div>
+                            <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-4">
+                                锁定首批内测名额
+                                <span class="block text-lg sm:text-xl text-amber-400 mt-2">（仅限前50个实验室）</span>
+                            </h2>
+                            <p class="text-slate-400 text-lg max-w-2xl mx-auto">
+                                现在登记，即可获得针对您所在领域的
+                                <span class="text-cyan-300 font-medium">《微小零件AI分拣可行性验证报告》</span>
+                                及一次<span class="text-white font-medium">免费的样机上门演示机会</span>。
+                            </p>
+                        </div>
+                        
+                        <!-- 表单 -->
+                        <form id="leadForm" class="space-y-5 max-w-lg mx-auto">
+                            
+                            <!-- 输入框1 -->
+                            <div>
+                                <label for="name" class="block text-sm font-medium text-slate-300 mb-2">
+                                    您的姓名与所在课题组/公司名 <span class="text-red-400">*</span>
+                                </label>
+                                <input 
+                                    type="text" 
+                                    id="name" 
+                                    name="name"
+                                    placeholder="例如：张同学 / 某985高校材料科学课题组 / XX精密制造有限公司"
+                                    class="input-focus w-full px-5 py-4 bg-slate-900/60 border-2 border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 transition-all duration-300"
+                                    required
+                                >
+                            </div>
+                            
+                            <!-- 输入框2 -->
+                            <div>
+                                <label for="partType" class="block text-sm font-medium text-slate-300 mb-2">
+                                    您需要分拣的典型零件类型 <span class="text-red-400">*</span>
+                                </label>
+                                <select 
+                                    id="partType" 
+                                    name="partType"
+                                    class="input-focus w-full px-5 py-4 bg-slate-900/60 border-2 border-slate-700 rounded-xl text-white focus:outline-none focus:border-cyan-500 transition-all duration-300 cursor-pointer appearance-none"
+                                    style="background-image: url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 fill=%27none%27 viewBox=%270 0 24 24%27 stroke=%27%2364748b%27%3E%3Cpath stroke-linecap=%27round%27 stroke-linejoin=%27round%27 stroke-width=%272%27 d=%27M19 9l-7 7-7-7%27 /%3E%3C/svg%3E'); background-repeat: no-repeat; background-position: right 1.25rem center; background-size: 1.5rem 1.5rem;"
+                                    required
+                                >
+                                    <option value="" class="bg-slate-800">请选择您的零件类型...</option>
+                                    <option value="electronic" class="bg-slate-800">🔌 贴片电子元件（电阻/电容/IC）</option>
+                                    <option value="biological" class="bg-slate-800">🧬 生物样本与种子</option>
+                                    <option value="mechanical" class="bg-slate-800">⚙️ 微型机械零件（钟表/轴承/弹簧）</option>
+                                    <option value="material" class="bg-slate-800">💎 材料微球与晶体</option>
+                                    <option value="other" class="bg-slate-800">📦 其他（请在后续沟通中说明）</option>
+                                </select>
+                            </div>
+                            
+                            <!-- 提交按钮 -->
+                            <button 
+                                type="submit" 
+                                class="btn-pulse group w-full flex items-center justify-center gap-3 px-8 py-5 bg-gradient-to-r from-cyan-500 via-blue-600 to-cyan-500 bg-size-200 hover:bg-right text-white font-bold text-lg rounded-xl transition-all duration-500 transform hover:scale-[1.02]"
+                                style="background-size: 200% 200%;"
+                            >
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                                </svg>
+                                <span>锁定我的免费内测名额 & 预约演示</span>
+                            </button>
+                            
+                        </form>
+                        
+                        <!-- 信任标识 -->
+                        <div class="mt-8 pt-8 border-t border-slate-700/50">
+                            <div class="flex flex-wrap items-center justify-center gap-6 text-slate-500 text-sm">
+                                <div class="flex items-center gap-2">
+                                    <svg class="w-4 h-4 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    <span>您的信息将被严格保密</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <svg class="w-4 h-4 text-cyan-400" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    <span>24小时内将有专员与您联系</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== 6. 用户调研表单 User Survey ==================== -->
+    <section id="survey" class="py-20 sm:py-28 bg-slate-950">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="max-w-3xl mx-auto">
+                
+                <!-- 标题 -->
+                <div class="text-center mb-12">
+                    <div class="inline-flex items-center gap-2 px-4 py-2 bg-green-500/10 rounded-full border border-green-500/30 mb-6">
+                        <svg class="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path>
+                            <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"></path>
+                        </svg>
+                        <span class="text-green-400 text-sm font-bold">用户调研</span>
+                    </div>
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">
+                        大学生创业项目<span class="text-green-400">用户调研问卷</span>
+                    </h2>
+                    <p class="text-slate-400">
+                        您的每一条建议对我们都至关重要。完成调研约需 2 分钟，
+                        <span class="text-cyan-300">调研完成后我们将优先为您提供内测资格</span>。
+                    </p>
+                </div>
+                
+                <!-- 调研表单卡片 -->
+                <div class="bg-gradient-to-br from-slate-800/60 to-slate-800/30 backdrop-blur-sm rounded-2xl p-6 sm:p-8 border border-slate-700/50">
+                    
+                    <form id="surveyForm" class="space-y-6">
+                        
+                        <!-- 姓名 -->
+                        <div>
+                            <label for="survey_name" class="block text-sm font-medium text-slate-300 mb-2">
+                                1. 您的姓名 <span class="text-red-400">*</span>
+                            </label>
+                            <input 
+                                type="text" 
+                                id="survey_name" 
+                                name="survey_name"
+                                placeholder="请输入您的姓名或昵称"
+                                class="input-focus w-full px-4 py-3 bg-slate-900/60 border-2 border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-green-500 transition-all duration-300"
+                                required
+                            >
+                        </div>
+                        
+                        <!-- 年级 -->
+                        <div>
+                            <label for="survey_grade" class="block text-sm font-medium text-slate-300 mb-2">
+                                2. 您的年级 <span class="text-red-400">*</span>
+                            </label>
+                            <select 
+                                id="survey_grade" 
+                                name="survey_grade"
+                                class="input-focus w-full px-4 py-3 bg-slate-900/60 border-2 border-slate-700 rounded-xl text-white focus:outline-none focus:border-green-500 transition-all duration-300 cursor-pointer appearance-none"
+                                style="background-image: url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 fill=%27none%27 viewBox=%270 0 24 24%27 stroke=%27%2364748b%27%3E%3Cpath stroke-linecap=%27round%27 stroke-linejoin=%27round%27 stroke-width=%272%27 d=%27M19 9l-7 7-7-7%27 /%3E%3C/svg%3E'); background-repeat: no-repeat; background-position: right 1rem center; background-size: 1.25rem 1.25rem;"
+                                required
+                            >
+                                <option value="" class="bg-slate-800">请选择...</option>
+                                <option value="freshman" class="bg-slate-800">大一</option>
+                                <option value="sophomore" class="bg-slate-800">大二</option>
+                                <option value="junior" class="bg-slate-800">大三</option>
+                                <option value="senior" class="bg-slate-800">大四</option>
+                                <option value="master" class="bg-slate-800">硕士研究生</option>
+                                <option value="phd" class="bg-slate-800">博士研究生</option>
+                                <option value="other" class="bg-slate-800">其他</option>
+                            </select>
+                        </div>
+                        
+                        <!-- 专业 -->
+                        <div>
+                            <label for="survey_major" class="block text-sm font-medium text-slate-300 mb-2">
+                                3. 您的专业 <span class="text-red-400">*</span>
+                            </label>
+                            <input 
+                                type="text" 
+                                id="survey_major" 
+                                name="survey_major"
+                                placeholder="例如：机械工程、自动化、材料科学、电子信息等"
+                                class="input-focus w-full px-4 py-3 bg-slate-900/60 border-2 border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-green-500 transition-all duration-300"
+                                required
+                            >
+                        </div>
+                        
+                        <!-- 是否愿意体验 -->
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-3">
+                                4. 您是否愿意成为首批产品体验官？<span class="text-red-400">*</span>
+                            </label>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="willing_to_try" value="yes" class="hidden peer" required>
+                                    <div class="p-4 bg-slate-900/40 border-2 border-slate-700 rounded-xl text-center transition-all duration-200 peer-checked:border-green-500 peer-checked:bg-green-500/10 hover:border-slate-600">
+                                        <div class="text-2xl mb-1">👍</div>
+                                        <div class="text-white font-medium text-sm">非常愿意</div>
+                                    </div>
+                                </label>
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="willing_to_try" value="maybe" class="hidden peer">
+                                    <div class="p-4 bg-slate-900/40 border-2 border-slate-700 rounded-xl text-center transition-all duration-200 peer-checked:border-cyan-500 peer-checked:bg-cyan-500/10 hover:border-slate-600">
+                                        <div class="text-2xl mb-1">🤔</div>
+                                        <div class="text-white font-medium text-sm">可以试试</div>
+                                    </div>
+                                </label>
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="willing_to_try" value="no" class="hidden peer">
+                                    <div class="p-4 bg-slate-900/40 border-2 border-slate-700 rounded-xl text-center transition-all duration-200 peer-checked:border-slate-500 peer-checked:bg-slate-500/10 hover:border-slate-600">
+                                        <div class="text-2xl mb-1">🙅</div>
+                                        <div class="text-white font-medium text-sm">暂时不需要</div>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <!-- 最关心的问题 -->
+                        <div>
+                            <label for="survey_concerns" class="block text-sm font-medium text-slate-300 mb-3">
+                                5. 您对这个机器人最关心的问题是？（可多选）
+                            </label>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <label class="cursor-pointer flex items-center gap-3 p-3 bg-slate-900/40 border-2 border-slate-700 rounded-xl transition-all duration-200 hover:border-slate-600 has-[:checked]:border-green-500 has-[:checked]:bg-green-500/10">
+                                    <input type="checkbox" name="concerns" value="price" class="w-4 h-4 text-green-500 bg-slate-700 border-slate-600 rounded focus:ring-green-500 focus:ring-offset-slate-800">
+                                    <span class="text-slate-300 text-sm">价格（多少钱？）</span>
+                                </label>
+                                <label class="cursor-pointer flex items-center gap-3 p-3 bg-slate-900/40 border-2 border-slate-700 rounded-xl transition-all duration-200 hover:border-slate-600 has-[:checked]:border-green-500 has-[:checked]:bg-green-500/10">
+                                    <input type="checkbox" name="concerns" value="accuracy" class="w-4 h-4 text-green-500 bg-slate-700 border-slate-600 rounded focus:ring-green-500 focus:ring-offset-slate-800">
+                                    <span class="text-slate-300 text-sm">分拣精度（能抓准吗？）</span>
+                                </label>
+                                <label class="cursor-pointer flex items-center gap-3 p-3 bg-slate-900/40 border-2 border-slate-700 rounded-xl transition-all duration-200 hover:border-slate-600 has-[:checked]:border-green-500 has-[:checked]:bg-green-500/10">
+                                    <input type="checkbox" name="concerns" value="speed" class="w-4 h-4 text-green-500 bg-slate-700 border-slate-600 rounded focus:ring-green-500 focus:ring-offset-slate-800">
+                                    <span class="text-slate-300 text-sm">分拣速度（有多快？）</span>
+                                </label>
+                                <label class="cursor-pointer flex items-center gap-3 p-3 bg-slate-900/40 border-2 border-slate-700 rounded-xl transition-all duration-200 hover:border-slate-600 has-[:checked]:border-green-500 has-[:checked]:bg-green-500/10">
+                                    <input type="checkbox" name="concerns" value="ease_of_use" class="w-4 h-4 text-green-500 bg-slate-700 border-slate-600 rounded focus:ring-green-500 focus:ring-offset-slate-800">
+                                    <span class="text-slate-300 text-sm">操作难度（容易上手吗？）</span>
+                                </label>
+                                <label class="cursor-pointer flex items-center gap-3 p-3 bg-slate-900/40 border-2 border-slate-700 rounded-xl transition-all duration-200 hover:border-slate-600 has-[:checked]:border-green-500 has-[:checked]:bg-green-500/10">
+                                    <input type="checkbox" name="concerns" value="reliability" class="w-4 h-4 text-green-500 bg-slate-700 border-slate-600 rounded focus:ring-green-500 focus:ring-offset-slate-800">
+                                    <span class="text-slate-300 text-sm">可靠性（容易坏吗？）</span>
+                                </label>
+                                <label class="cursor-pointer flex items-center gap-3 p-3 bg-slate-900/40 border-2 border-slate-700 rounded-xl transition-all duration-200 hover:border-slate-600 has-[:checked]:border-green-500 has-[:checked]:bg-green-500/10">
+                                    <input type="checkbox" name="concerns" value="other" class="w-4 h-4 text-green-500 bg-slate-700 border-slate-600 rounded focus:ring-green-500 focus:ring-offset-slate-800">
+                                    <span class="text-slate-300 text-sm">其他问题</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <!-- 联系方式 -->
+                        <div>
+                            <label for="survey_contact" class="block text-sm font-medium text-slate-300 mb-2">
+                                6. 您的联系方式（优先为您安排内测）<span class="text-red-400">*</span>
+                            </label>
+                            <input 
+                                type="text" 
+                                id="survey_contact" 
+                                name="survey_contact"
+                                placeholder="手机号 / 微信号 / QQ号 / 邮箱"
+                                class="input-focus w-full px-4 py-3 bg-slate-900/60 border-2 border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-green-500 transition-all duration-300"
+                                required
+                            >
+                            <p class="mt-2 text-xs text-slate-500">
+                                <svg class="w-3 h-3 inline mr-1 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                </svg>
+                                我们承诺您的联系方式将被严格保密，仅用于产品内测通知
+                            </p>
+                        </div>
+                        
+                        <!-- 提交按钮 -->
+                        <button 
+                            type="submit" 
+                            class="group w-full flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-green-500 via-emerald-600 to-green-500 hover:from-green-400 hover:via-emerald-500 hover:to-green-400 text-white font-bold rounded-xl transition-all duration-500 transform hover:scale-[1.02] shadow-lg shadow-green-500/25"
+                            style="background-size: 200% 200%;"
+                        >
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <span>提交调研问卷 & 申请优先体验</span>
+                        </button>
+                        
+                    </form>
+                </div>
+                
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== Footer ==================== -->
+    <footer class="py-12 bg-slate-950 border-t border-slate-800">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="max-w-5xl mx-auto">
+                <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+                    <div class="text-center md:text-left">
+                        <div class="text-xl font-bold text-white mb-1">
+                            <span class="gradient-text">DeltaSort AI</span>
+                        </div>
+                        <p class="text-slate-500 text-sm">桌面级AI视觉分拣机器人 · 专为科研实验室打造</p>
+                    </div>
+                    <div class="flex items-center gap-6 text-slate-500 text-sm">
+                        <a href="#problem" class="hover:text-cyan-400 transition-colors">痛点分析</a>
+                        <a href="#solution" class="hover:text-cyan-400 transition-colors">解决方案</a>
+                        <a href="#survey" class="hover:text-green-400 transition-colors">用户调研</a>
+                        <a href="#cta" class="hover:text-cyan-400 transition-colors">预约演示</a>
+                    </div>
+                </div>
+                <div class="mt-8 pt-8 border-t border-slate-800/50 text-center text-slate-600 text-xs">
+                    <p>© 2026 DeltaSort AI. All rights reserved. | Made with 🧪 in the lab</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ==================== JavaScript ==================== -->
+    <script>
+        // 表单提交处理
+        document.getElementById('leadForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const partType = document.getElementById('partType').value;
+            const partTypeText = document.getElementById('partType').options[document.getElementById('partType').selectedIndex].text;
+            
+            // 模拟提交成功
+            const button = this.querySelector('button[type="submit"]');
+            const originalContent = button.innerHTML;
+            
+            button.innerHTML = `
+                <svg class="w-6 h-6 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span>提交中...</span>
+            `;
+            button.disabled = true;
+            
+            setTimeout(() => {
+                button.innerHTML = `
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    <span>🎉 提交成功！我们会尽快与您联系</span>
+                `;
+                button.classList.remove('from-cyan-500', 'via-blue-600', 'to-cyan-500');
+                button.classList.add('bg-green-600');
+                button.style.animation = 'none';
+                button.style.boxShadow = '0 0 40px rgba(34, 197, 94, 0.5)';
+                
+                console.log('表单提交数据:', { name, partType, partTypeText });
+            }, 1500);
+        });
+        
+        // 用户调研表单提交处理
+        document.getElementById('surveyForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // 收集表单数据
+            const formData = {
+                name: document.getElementById('survey_name').value,
+                grade: document.getElementById('survey_grade').value,
+                gradeText: document.getElementById('survey_grade').options[document.getElementById('survey_grade').selectedIndex].text,
+                major: document.getElementById('survey_major').value,
+                willing_to_try: document.querySelector('input[name="willing_to_try"]:checked')?.value,
+                concerns: Array.from(document.querySelectorAll('input[name="concerns"]:checked')).map(cb => cb.value),
+                contact: document.getElementById('survey_contact').value
+            };
+            
+            // 模拟提交成功
+            const button = this.querySelector('button[type="submit"]');
+            
+            button.innerHTML = `
+                <svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span>提交中...</span>
+            `;
+            button.disabled = true;
+            
+            setTimeout(() => {
+                button.innerHTML = `
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    <span>🎉 调研提交成功！您已获得优先体验资格</span>
+                `;
+                button.style.background = 'linear-gradient(to right, #059669, #10b981, #059669)';
+                button.style.boxShadow = '0 0 40px rgba(16, 185, 129, 0.5)';
+                
+                // 在控制台输出收集的数据（实际项目中会发送到服务器）
+                console.log('📋 用户调研数据:', JSON.stringify(formData, null, 2));
+                console.log('💡 提示：在实际项目中，这些数据会发送到您的服务器或问卷收集平台');
+            }, 1500);
+        });
+        
+        // 平滑滚动增强
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // 滚动时的导航栏效果
+        let lastScroll = 0;
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.pageYOffset;
+            if (currentScroll > lastScroll && currentScroll > 100) {
+                // 向下滚动
+            } else {
+                // 向上滚动
+            }
+            lastScroll = currentScroll;
+        });
+    </script>
+</body>
+</html>

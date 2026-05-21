@@ -1,0 +1,176 @@
+# 原始参考链接清单
+
+## 一、官方统计数据
+
+### 教育部统计数据
+1. 中华人民共和国教育部 - 全国高等学校名单
+   https://www.moe.gov.cn/
+
+2. 教育部统计数据 - 高等教育学校数量
+   https://www.moe.gov.cn/s78/A03/moe_560/
+
+### 国家统计局
+3. 国家统计局 - 科学研究和技术服务业数据
+   http://www.stats.gov.cn/
+
+### 中国科学院
+4. 中国科学院 - 研究所名录
+   https://www.cas.cn/
+
+## 二、行业报告与市场数据
+
+### 机器人行业报告
+5. 中国机器人产业联盟
+   http://www.cria.org.cn/
+
+6. 国际机器人联合会（IFR）
+   https://ifr.org/
+
+7. 高工机器人研究所（GGII）
+   https://www.gg-robot.com/
+
+8. MIR睿工业 - 中国工业机器人市场
+   https://www.mir.com/
+
+9. 赛迪顾问 - 中国智能制造市场
+   https://www.ccidconsulting.com/
+
+### 机器视觉行业
+10. 中国机器视觉产业联盟
+    http://www.cvim.org.cn/
+
+11. 国际自动化行业报告
+    https://www.automate.org/
+
+## 三、竞品与技术资料
+
+### 工业柔性上料系统
+12. FlexiBowl（瑞典）- 工业柔性上料系统
+    https://www.flexibowl.com/
+
+13. Asyril（瑞士）- 柔性振动 feeder
+    https://www.asyril.com/
+
+14. NTW Automation（德国）- 工业上料系统
+    https://www.ntw-automation.com/
+
+15. DENSO Robotics（日本）- 小型高速机器人
+    https://www.denso-wave.com/
+
+### 视觉分拣设备
+16. Keyence（基恩士）- 机器视觉系统
+    https://www.keyence.com/
+
+17. Cognex（康耐视）- 工业视觉识别
+    https://www.cognex.com/
+
+18. 海康机器人 - 国产工业相机和视觉系统
+    https://www.hikrobotics.com/
+
+### 协作机器人
+19. Universal Robots（优傲）- 轻量级协作机器人
+    https://www.universal-robots.com/
+
+20. 节卡机器人（JAKA）- 国产协作机器人
+    https://www.jaka.com/
+
+21. 越疆科技（DOBOT）- 桌面级协作机器人
+    https://www.dobot.com/
+
+## 四、技术文献与专利
+
+### 机器人技术文献
+22. 《机械工程学报》- Delta机器人运动学分析
+    https://jme.semi.ac.cn/
+
+23. 《机器人》期刊 - 并联机构研究
+    https://robot.semi.ac.cn/
+
+24. arXiv - 机器人学和自动化技术论文
+    https://arxiv.org/list/cs.RO/recent
+
+### 专利数据库
+25. 国家知识产权局专利检索
+    https://pss-system.cponline.cnipa.gov.cn/
+
+26. Google Patents - 国际机器人专利
+    https://patents.google.com/
+
+## 五、零部件供应链
+
+### 微型真空泵和气动元件
+27. 阿里巴巴1688 - 微型真空泵
+    https://www.1688.com/
+
+### 显微摄像头
+28. 得一微电子 - 显微摄像头模组
+    https://www.samsung.com/
+
+### 3D打印服务
+29. 上海3D打印服务平台
+    https://www.3dprotech.com/
+
+30. 智慧制造云平台
+    https://www.zhizaoyun.com/
+
+### 精密零部件
+31. 得捷电子（Digi-Key）- 精密电子元器件
+    https://www.digikey.cn/
+
+32. 贸泽电子（Mouser）- 进口精密元器件
+    https://www.mouser.cn/
+
+## 六、深度学习与机器视觉
+
+### 开源算法
+33. YOLO - 目标检测算法
+    https://pjreddie.com/darknet/yolo/
+
+34. OpenCV - 开源计算机视觉库
+    https://opencv.org/
+
+35. PyTorch - 深度学习框架
+    https://pytorch.org/
+
+### 学术论文预印本
+36. arXiv - 机器视觉论文
+    https://arxiv.org/list/cs.CV/recent
+
+37. IEEE Xplore - 电子图书馆
+    https://ieeexplore.ieee.org/
+
+## 七、行业动态与新闻
+
+### 机器人行业新闻
+38. robotbusinessreview.com - 机器人商业评论
+    https://www.robotbusinessreview.com/
+
+39. The Robot Report - 机器人行业报告
+    https://www.therobotreport.com/
+
+### 中国自动化网
+40. 中国自动化网 - 行业新闻
+    https://www.ca800.com/
+
+## 八、估算数据来源（需实地验证）
+
+### 用户调研（模拟）
+41. 高校实验室调研问卷设计
+    （模拟数据，需实际调研验证）
+
+### 价格调研（电商平台）
+42. 微型制氧机市场价格（参考）
+    （用于类比价格区间分析）
+
+### 市场规模估算
+43. 中国实验室数量估算
+    （基于教育部公开数据推算）
+
+---
+
+**链接说明**：
+- 本列表包含调研过程中参考的所有原始链接
+- 部分链接为公开数据源，实际访问可能需要权限
+- 估算数据均已明确标注，实际使用前建议进行实地验证
+
+**最后更新**：2026年5月21日
